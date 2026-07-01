@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Paid Outbound Campaign Blueprint</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f7;color:#1d1d1f}
+.header{background:#1a1a2e;color:#fff;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.header-title{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.header-sub{font-size:12px;color:rgba(255,255,255,.55);margin-top:2px}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cfg-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .15s}
+.cfg-btn:hover{background:rgba(255,255,255,.2)}
+.tabs{background:#fff;border-bottom:1px solid #e5e5ea;padding:0 24px;display:flex;overflow-x:auto;gap:0}
+.tab{padding:13px 16px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;color:#6b6b80;white-space:nowrap;display:flex;align-items:center;gap:6px;transition:color .15s}
+.tab:hover{color:#1d1d1f}
+.tab.active{color:#5B4FBE;border-bottom-color:#5B4FBE}
+.tc{background:#f0f0f5;color:#6b6b80;font-size:10px;padding:2px 6px;border-radius:10px}
+.tab.active .tc{background:#ede9fc;color:#5B4FBE}
+.controls{padding:14px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ctrl-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctrl-lbl{font-size:12px;font-weight:600;color:#6b6b80;white-space:nowrap}
+.ctrl-sel{padding:5px 12px;border-radius:8px;border:1.5px solid #e5e5ea;background:#fff;font-size:12px;font-weight:500;cursor:pointer;color:#1d1d1f;outline:none;-webkit-appearance:none;appearance:none;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.ctrl-sel:focus{border-color:#6366f1}
+.ea{margin-left:auto;padding:5px 13px;border-radius:6px;border:1.5px solid #e5e5ea;background:#fff;font-size:12px;color:#6b6b80;cursor:pointer}
+.ea:hover{background:#f5f5f7}
+.stats{display:flex;gap:10px;padding:0 24px 14px;flex-wrap:wrap}
+.sp{background:#fff;border:1px solid #e5e5ea;border-radius:8px;padding:9px 14px;min-width:100px}
+.sl{font-size:10px;color:#8e8e93;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.sv{font-size:19px;font-weight:700;color:#1d1d1f;margin-top:1px}
+.cc{padding:0 24px 24px;display:flex;flex-direction:column;gap:6px}
+.fs{margin-bottom:2px}
+.fh{display:flex;align-items:center;gap:8px;padding:10px 0 7px}
+.fb2{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.fb2.upper,.fb2.brand,.fb2.brand_nttf{background:#DBEAFE;color:#1D4ED8}
+.fb2.mid,.fb2.traffic,.fb2.nttf{background:#FEF3C7;color:#D97706}
+.fb2.lower{background:#D1FAE5;color:#065F46}
+.fl{flex:1;height:1px;background:#e5e5ea}
+.card{background:#fff;border:1px solid #e5e5ea;border-radius:10px;overflow:hidden;transition:box-shadow .15s;margin-bottom:6px}
+.card:hover{box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.card.paused{opacity:.6}
+.ch{padding:13px 15px;cursor:pointer;display:flex;align-items:flex-start;gap:10px}
+.ct{margin-top:2px;width:17px;height:17px;border-radius:4px;display:flex;align-items:center;justify-content:center;background:#f5f5f7;flex-shrink:0;transition:transform .15s;color:#6b6b80;font-size:10px}
+.card.open .ct{transform:rotate(90deg)}
+.cm{flex:1;min-width:0}
+.cn{font-size:11.5px;font-family:'SF Mono','Monaco',monospace;color:#5B4FBE;font-weight:600;word-break:break-all;line-height:1.4}
+.cl{font-size:13px;font-weight:600;color:#1d1d1f;margin-bottom:4px}
+.cme{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.ch2{font-size:11px;padding:2px 7px;border-radius:4px;background:#f5f5f7;color:#6b6b80}
+.ch2.kpi{background:#f0f0f5;color:#5B4FBE}
+.ch2.obj{background:#FEF9EC;color:#B45309}
+.ch2.nttf{background:#FEF3C7;color:#D97706}
+.ch2.new{background:#DCFCE7;color:#166534;font-weight:600}
+.ch2.paused{background:#FEF2F2;color:#9A3412}
+.cr{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0}
+.ab{font-size:11px;padding:3px 8px;border-radius:20px;background:#f5f5f7;color:#6b6b80;white-space:nowrap}
+.ab.nodoc{background:#FEF3C7;color:#92400E;font-style:italic}
+.asc{border-top:1px solid #f0f0f5;padding:10px 14px 14px 42px;display:none;flex-direction:column;gap:7px}
+.card.open .asc{display:flex}
+.ac{background:#fafafa;border:1px solid #ececec;border-radius:8px;padding:9px 11px}
+.an{font-size:10px;font-family:'SF Mono','Monaco',monospace;color:#8e8e93;margin-bottom:3px;word-break:break-all}
+.al{font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:5px}
+.ad{display:flex;flex-wrap:wrap;gap:5px}
+.aud{font-size:11px;padding:2px 7px;border-radius:4px;background:#EEF2FF;color:#4338CA}
+.plc{font-size:11px;padding:2px 7px;border-radius:4px;background:#F0FDF4;color:#166534}
+.inv{font-size:11px;padding:2px 7px;border-radius:4px;background:#FDF4FF;color:#7E22CE}
+.tgt{font-size:10px;padding:2px 7px;border-radius:4px;background:#FFF7ED;color:#9A3412;max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cre{font-size:10px;padding:2px 7px;border-radius:4px;background:#F0F9FF;color:#0369A1;max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.anote{font-size:10px;color:#9CA3AF;margin-top:3px;font-style:italic}
+.excl-note{font-size:10px;margin-top:4px;color:#991B1B;background:#FEF2F2;border:1px solid #FECACA;border-radius:4px;padding:3px 7px;display:flex;align-items:baseline;gap:5px}
+.excl-badge{font-size:9px;font-weight:700;background:#DC2626;color:#fff;border-radius:3px;padding:1px 4px;white-space:nowrap;flex-shrink:0}
+.excl-chip{font-size:10px;padding:2px 7px;border-radius:4px;background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
+.empty{text-align:center;padding:60px 24px;color:#8e8e93}
+.empty h3{font-size:17px;font-weight:600;color:#1d1d1f;margin-bottom:6px}
+.empty p{font-size:13px;line-height:1.6}
+.ch-content{display:none}
+.ch-content.active{display:block}
+.src{padding:10px 24px 18px;color:#8e8e93;font-size:11px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal{background:#fff;border-radius:14px;padding:28px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal h2{font-size:17px;font-weight:700;color:#1d1d1f;margin-bottom:6px}
+.modal-desc{font-size:13px;color:#6b6b80;line-height:1.6;margin-bottom:18px}
+.modal label{font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:6px}
+.modal input[type=url]{width:100%;padding:9px 12px;border:1.5px solid #e5e5ea;border-radius:8px;font-size:13px;color:#1d1d1f;outline:none;margin-bottom:16px}
+.modal input[type=url]:focus{border-color:#5B4FBE}
+.modal-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-primary{background:#5B4FBE;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+.btn-primary:hover{background:#4a3fa8}
+.btn-secondary{background:#f5f5f7;color:#374151;border:1.5px solid #e5e5ea;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer}
+.btn-secondary:hover{background:#ebebef}
+.btn-danger{background:#FEF2F2;color:#9A3412;border:1.5px solid #FECACA;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer}
+.modal-help{margin-top:20px;background:#f5f5f7;border-radius:8px;padding:14px 16px}
+.modal-help h4{font-size:12px;font-weight:700;color:#374151;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
+.modal-help ol{padding-left:16px;font-size:12px;color:#6b6b80;line-height:1.9}
+.modal-help a{color:#5B4FBE}
+.current-url{font-size:11px;color:#6b6b80;margin-bottom:14px;word-break:break-all;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:6px;padding:8px 10px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">Paid Outbound Campaign Blueprint</div>
+    <div class="header-sub">Social + Programmatic · Campaign &rarr; Ad Set / Ad Group</div>
+  </div>
+  <div class="header-right">
+    <button class="cfg-btn" onclick="openCfg()">&#9881; Connect Sheet</button>
+  </div>
+</div>
+
+<div id="tabs-container" class="tabs"></div>
+<div id="content-container"></div>
+
+<div id="cfg-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeCfg()">
+  <div class="modal">
+    <h2>Connect Google Sheet</h2>
+    <p class="modal-desc">Paste the <strong>published CSV URL</strong> from the Wpromote Google Sheet. The dashboard will fetch live data every time it opens &mdash; no manual edits needed when campaigns change.</p>
+    <div id="current-url-display" class="current-url" style="display:none"></div>
+    <label for="cfg-url">Published CSV URL</label>
+    <input type="url" id="cfg-url" placeholder="https://docs.google.com/spreadsheets/d/e/&hellip;/pub?output=csv" />
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="saveCfg()">Save &amp; Reload Data</button>
+      <button class="btn-danger" onclick="clearCfg()">Clear URL</button>
+      <button class="btn-secondary" onclick="closeCfg()">Cancel</button>
+    </div>
+    <div class="modal-help">
+      <h4>How to get the published CSV URL</h4>
+      <ol>
+        <li>Open the Google Sheet in your browser</li>
+        <li>Go to <strong>File &rarr; Share &rarr; Publish to web</strong></li>
+        <li>Select the <strong>"Campaign Data"</strong> sheet and <strong>CSV</strong> format</li>
+        <li>Click <strong>Publish</strong> and copy the URL</li>
+        <li>Paste above and click <strong>Save &amp; Reload</strong></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<script>
+const CHANNEL_ORDER=[
+  {id:'meta',label:'Meta (FB/IG)',adterm:'Ad Sets',
+   src:'Source: EXT | LZ | Campaign Mapping · Social · June 2026 (Active campaigns only)'},
+  {id:'tiktok',label:'TikTok',adterm:'Ad Sets',
+   src:'Source: EXT | LZ | Campaign Mapping · Social · June 2026 (No active campaigns in mapping doc)'},
+  {id:'reddit',label:'Reddit',adterm:'Ad Sets',
+   src:'Source: EXT | LZ | Campaign Mapping · Social · June 2026 (Active campaigns only)'},
+  {id:'ttd',label:'Programmatic (TTD)',adterm:'Ad Groups',
+   src:'Source: EXT | LZ | Campaign Mapping · Programmatic · June 2026 (Active campaigns only)'},
+  {id:'google_yt',label:'YouTube',adterm:'Ad Sets',src:'Source: EXT | LZ | Campaign Mapping · Search · June 2026 (Active campaigns only)'},
+  {id:'linkedin',label:'LinkedIn',adterm:'Ad Sets',src:'Source: EXT | LZ | Campaign Mapping · Social · June 2026 (Active campaigns only)'},
+];
+const FUNNEL_ORDER=['upper','brand','brand_nttf','mid','traffic','nttf','lower'];
+const FUNNEL_LABELS={upper:'Awareness — Brand',brand:'Awareness',brand_nttf:'Awareness — NTTF',mid:'Consideration — Qstarts',traffic:'Consideration — Traffic',nttf:'Consideration — NTTF',lower:'Conversions'};
+const FUNNEL_GROUPS={awareness:['upper','brand','brand_nttf'],consideration:['mid','traffic','nttf'],conversion:['lower']};
+const TARGETING_CODES={BHT:'Behavioral',LAL:'Lookalike',INTR:'Interest / Native',CXT:'Contextual',SKT:'Keyword',CNT:'Topic / Content',CWT:'1P Retargeting',WRT:'1P Retargeting',ERT:'Engaged Audience',CLT:'1P Retargeting',AUT:'Automated (ASC)',MAX:'Automated (Max)'};
+function getTgtCode(tech){return(tech||'').split('_')[8]||'';}
+function getTgtLabel(tech){const c=getTgtCode(tech);return TARGETING_CODES[c]||c||'';}
+const COLS=['channel','channel_label','funnel','funnel_label','campaign_label','campaign_name','campaign_status','objective','kpis','campaign_notes','is_new_2026','adset_label','adset_techname','adset_status','audience_size','placements','targeting','inventory','creatives','adset_notes'];
+
+const DEFAULT_ROWS=[
+['ttd','Programmatic (TTD)','brand','Awareness','TTD | Audio | Prospecting','LZ_AO_BRD_AWR_AUD_BS_NA_NA_NA_TTD-AUDIO','Active','Brand Awareness / Audio','CPM, Audio Completion Rate','','TRUE','Audacy — Streaming Music','AUD_BRD_BRD_AUD_PROG_TTD_PMP_CEV_LAL_AWR_FUT_INP_AD_MULTI_dCPM_SegmentLALs-Audacy-StreamingMusic','Active','','Audio (Audacy — Streaming Music)','','','',''],
+['ttd','Programmatic (TTD)','brand','Awareness','TTD | Audio | Prospecting','LZ_AO_BRD_AWR_AUD_BS_NA_NA_NA_TTD-AUDIO','Active','Brand Awareness / Audio','CPM, Audio Completion Rate','','TRUE','Audacy — Podcasts','AUD_BRD_BRD_AUD_PROG_TTD_PMP_CEV_LAL_AWR_FUT_INP_PDCT_MULTI_dCPM_SegmentLALs-Audacy-Podcasts','Active','','Audio (Audacy — Podcasts)','','','',''],
+['ttd','Programmatic (TTD)','brand','Awareness','TTD | Audio | Prospecting','LZ_AO_BRD_AWR_AUD_BS_NA_NA_NA_TTD-AUDIO','Active','Brand Awareness / Audio','CPM, Audio Completion Rate','','TRUE','iHeart — Streaming Music','IHR_BRD_BRD_AUD_PROG_TTD_PMP_CEV_LAL_AWR_FUT_INP_AD_MULTI_dCPM_SegmentLALs-iHeart-StreamingMusic','Active','','Audio (iHeart — Streaming Music)','','','',''],
+['ttd','Programmatic (TTD)','brand','Awareness','TTD | Audio | Prospecting','LZ_AO_BRD_AWR_AUD_BS_NA_NA_NA_TTD-AUDIO','Active','Brand Awareness / Audio','CPM, Audio Completion Rate','','TRUE','iHeart — Podcasts','IHR_BRD_BRD_AUD_PROG_TTD_PMP_CEV_LAL_AWR_FUT_INP_PDCT_MULTI_dCPM_SegmentLALs-iHeart-Podcasts','Active','','Audio (iHeart — Podcasts)','','','',''],
+['ttd','Programmatic (TTD)','brand','Awareness','TTD | Audio | Prospecting','LZ_AO_BRD_AWR_AUD_BS_NA_NA_NA_TTD-AUDIO','Active','Brand Awareness / Audio','CPM, Audio Completion Rate','','TRUE','Spotify — Streaming Music','SPOT_BRD_BRD_AUD_PROG_TTD_PMP_CEV_LAL_AWR_FUT_INP_AD_MULTI_dCPM_SegmentLALs-Spotify-StreamingMusic','Active','','Audio (Spotify — Streaming Music)','','','',''],
+['ttd','Programmatic (TTD)','brand','Awareness','TTD | Audio | Prospecting','LZ_AO_BRD_AWR_AUD_BS_NA_NA_NA_TTD-AUDIO','Active','Brand Awareness / Audio','CPM, Audio Completion Rate','','TRUE','Spotify — Podcasts','SPOT_BRD_BRD_AUD_PROG_TTD_PMP_CEV_LAL_AWR_FUT_INP_PDCT_MULTI_dCPM_SegmentLALs-Spotify-Podcasts','Active','','Audio (Spotify — Podcasts)','','','',''],
+['ttd','Programmatic (TTD)','brand','Awareness','TTD | Audio | Prospecting','LZ_AO_BRD_AWR_AUD_BS_NA_NA_NA_TTD-AUDIO','Active','Brand Awareness / Audio','CPM, Audio Completion Rate','','TRUE','SiriusXM — Streaming Music','SXM_BRD_BRD_AUD_PROG_TTD_PMP_CEV_LAL_AWR_FUT_INP_AD_MULTI_dCPM_SegmentLALs-SXM-StreamingMusic','Active','','Audio (SiriusXM — Streaming Music)','','','',''],
+['ttd','Programmatic (TTD)','brand','Awareness','TTD | Audio | Prospecting','LZ_AO_BRD_AWR_AUD_BS_NA_NA_NA_TTD-AUDIO','Active','Brand Awareness / Audio','CPM, Audio Completion Rate','','TRUE','SiriusXM — Podcasts','SXM_BRD_BRD_AUD_PROG_TTD_PMP_CEV_LAL_AWR_FUT_INP_PDCT_MULTI_dCPM_SegmentLALs-SXM-Podcasts','Active','','Audio (SiriusXM — Podcasts)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Native | Prospecting','LZ_AO_PBMIH_CON_DIS_BS_NA_NA_NA_TTD-NVD-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Budget Conscious Consumer (BHT/EX)','TTD_BS_PRS_DIS_PROG_TTD_EX_CEV_BHT_CVS_IMT_PLT_NVD_MULTI_dCPM_BudgetConsciousConsumer','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Native | Prospecting','LZ_AO_PBMIH_CON_DIS_BS_NA_NA_NA_TTD-NVD-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','SBIO (BHT/EX)','TTD_BS_PRS_DIS_PROG_TTD_EX_CEV_BHT_CVS_NRM_PLT_NVD_MULTI_dCPM_SBIO','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Native | Prospecting','LZ_AO_PBMIH_CON_DIS_BS_NA_NA_NA_TTD-NVD-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','WLAL All Purchasers 100% (LAL/EX)','TTD_BS_PRS_DIS_PROG_TTD_EX_CEV_LAL_CVS_NRM_PLT_NVD_MULTI_dCPM_WLAL-AllPurchasers-100pct','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Native | Prospecting','LZ_AO_PBMIH_CON_DIS_BS_NA_NA_NA_TTD-NVD-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Captify — Entrepreneur (BHT/PMP)','TTD_BS_PRS_DIS_PROG_TTD_PMP_CEV_BHT_CVS_NRM_INP_NVD_MULTI_dCPM_Captify-Entrepreneur','Active','','Display (PMP — Captify)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Native | Prospecting','LZ_AO_PBMIH_CON_DIS_BS_NA_NA_NA_TTD-NVD-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Captify — LZ Affinity (BHT/PMP)','TTD_BS_PRS_DIS_PROG_TTD_PMP_CEV_BHT_CVS_NRM_INP_NVD_MULTI_dCPM_Captify-LegalZoomAffinity','Active','','Display (PMP — Captify)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Native | Prospecting','LZ_AO_PBMIH_CON_DIS_BS_NA_NA_NA_TTD-NVD-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Captify — SB Intenders (BHT/PMP)','TTD_BS_PRS_DIS_PROG_TTD_PMP_CEV_BHT_CVS_NRM_INP_NVD_MULTI_dCPM_Captify-SmallBusinessIntenders','Active','','Display (PMP — Captify)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Native | Prospecting','LZ_AO_PBMIH_CON_DIS_BS_NA_NA_NA_TTD-NVD-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Captify — SB Owners (BHT/PMP)','TTD_BS_PRS_DIS_PROG_TTD_PMP_CEV_BHT_CVS_NRM_INP_NVD_MULTI_dCPM_Captify-SmallBusinessOwners','Active','','Display (PMP — Captify)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Native | Prospecting','LZ_AO_PBMIH_CON_DIS_BS_NA_NA_NA_TTD-NVD-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Captify — Competitors (CXT/PMP)','TTD_BS_PRS_DIS_PROG_TTD_PMP_CEV_CXT_CVS_NRM_INP_NVD_MULTI_dCPM_Captify-Competitors','Active','','Display (PMP — Captify)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Native | Retargeting','LZ_AO_PBMIH_CON_DIS_BS_NA_NA_NA_TTD-NVD-RT','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','All Abandoners 90D','TTD_BS_RET_DIS_PROG_TTD_EX_CEV_CWT_CVS_IMT_CLW_NVD_MULTI_dCPM_AllAbandoners-90d','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Native | Retargeting','LZ_AO_PBMIH_CON_DIS_BS_NA_NA_NA_TTD-NVD-RT','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','All Abandoners 91-120D','TTD_BS_RET_DIS_PROG_TTD_EX_CEV_CWT_CVS_IMT_CLW_NVD_MULTI_dCPM_AllAbandoners-91to120d','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Native | Retargeting','LZ_AO_PBMIH_CON_DIS_BS_NA_NA_NA_TTD-NVD-RT','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','LLC Cart Abandoners','TTD_BS_RET_DIS_PROG_TTD_EX_CEV_CWT_CVS_IMT_CLW_NVD_MULTI_dCPM_LLCCartAbandoners','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Native | Retargeting','LZ_AO_PBMIH_CON_DIS_BS_NA_NA_NA_TTD-NVD-RT','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','LLC Page Abandoners','TTD_BS_RET_DIS_PROG_TTD_EX_CEV_CWT_CVS_IMT_CLW_NVD_MULTI_dCPM_LLCPageAbandoners','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Native | Retargeting','LZ_AO_PBMIH_CON_DIS_BS_NA_NA_NA_TTD-NVD-RT','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','EP Page/Cart Abandoners','TTD_PS_RET_DIS_PROG_TTD_EX_CEV_CWT_CVS_IMT_CLW_NVD_MULTI_dCPM_EPPageCartAbandoners','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Display | Retargeting','LZ_AO_PBM_CON_DIS_BS_NA_NA_NA_TTD-DIS-RT','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','All Abandoners 90D','TTD_BS_RET_DIS_PROG_TTD_EX_CEV_CWT_CVS_IMT_CLW_STB_MULTI_dCPM_AllAbandoners-90d','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Display | Retargeting','LZ_AO_PBM_CON_DIS_BS_NA_NA_NA_TTD-DIS-RT','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','All Abandoners 91-120D','TTD_BS_RET_DIS_PROG_TTD_EX_CEV_CWT_CVS_IMT_CLW_STB_MULTI_dCPM_AllAbandoners-91-120d','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Display | Retargeting','LZ_AO_PBM_CON_DIS_BS_NA_NA_NA_TTD-DIS-RT','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','LLC Cart Abandoners','TTD_BS_RET_DIS_PROG_TTD_EX_CEV_CWT_CVS_IMT_CLW_STB_MULTI_dCPM_LLCCartAbandoners','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Display | Retargeting','LZ_AO_PBM_CON_DIS_BS_NA_NA_NA_TTD-DIS-RT','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','LLC Page Abandoners','TTD_BS_RET_DIS_PROG_TTD_EX_CEV_CWT_CVS_IMT_CLW_STB_MULTI_dCPM_LLCPageAbandoners','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Display | Retargeting','LZ_AO_PBM_CON_DIS_BS_NA_NA_NA_TTD-DIS-RT','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','EP Page/Cart Abandoners','TTD_PS_RET_DIS_PROG_TTD_EX_CEV_CWT_CVS_IMT_CLW_STB_MULTI_dCPM_EPPageCartAbandoners','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Display | Prospecting','LZ_AO_PBM_CON_DIS_BS_NA_NA_NA_TTD-DIS-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Budget Conscious Consumer (BHT/EX)','TTD_BS_PRS_DIS_PROG_TTD_EX_CEV_BHT_CVS_IMT_PLT_STB_MULTI_dCPM_BudgetConsciousConsumer','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Display | Prospecting','LZ_AO_PBM_CON_DIS_BS_NA_NA_NA_TTD-DIS-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','SBIO (BHT/EX)','TTD_BS_PRS_DIS_PROG_TTD_EX_CEV_BHT_CVS_NRM_PLT_STB_MULTI_dCPM_SBIO','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Display | Prospecting','LZ_AO_PBM_CON_DIS_BS_NA_NA_NA_TTD-DIS-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Contextual PMP — Insider','TTD_BS_PRS_DIS_PROG_TTD_EX_CEV_CXT_CVS_NRM_PLT_STB_MULTI_dCPM_ContextualPMP-Insider','Active','','Display (PMP — Insider)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Display | Prospecting','LZ_AO_PBM_CON_DIS_BS_NA_NA_NA_TTD-DIS-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Contextual PMP — Kiplinger','TTD_BS_PRS_DIS_PROG_TTD_EX_CEV_CXT_CVS_NRM_PLT_STB_MULTI_dCPM_ContextualPMP-Kiplinger','Active','','Display (PMP — Kiplinger)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Display | Prospecting','LZ_AO_PBM_CON_DIS_BS_NA_NA_NA_TTD-DIS-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','WLAL All Purchasers 100% (LAL/EX)','TTD_BS_PRS_DIS_PROG_TTD_EX_CEV_LAL_CVS_NRM_PLT_STB_MULTI_dCPM_WLAL-AllPurchasers-100pct','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Display | Prospecting','LZ_AO_PBM_CON_DIS_BS_NA_NA_NA_TTD-DIS-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Captify — Entrepreneur (BHT/PMP)','TTD_BS_PRS_DIS_PROG_TTD_PMP_CEV_BHT_CVS_NRM_INP_STB_MULTI_dCPM_Captify-Entrepreneur','Active','','Display (PMP — Captify)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Display | Prospecting','LZ_AO_PBM_CON_DIS_BS_NA_NA_NA_TTD-DIS-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Captify — SB Intenders (BHT/PMP)','TTD_BS_PRS_DIS_PROG_TTD_PMP_CEV_BHT_CVS_NRM_INP_STB_MULTI_dCPM_Captify-SmallBusinessIntenders','Active','','Display (PMP — Captify)','','','',''],
+['ttd','Programmatic (TTD)','lower','Conversions','TTD | Display | Prospecting','LZ_AO_PBM_CON_DIS_BS_NA_NA_NA_TTD-DIS-PRS','Active','PBM / Prospecting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Captify — SB Owners (BHT/PMP)','TTD_BS_PRS_DIS_PROG_TTD_PMP_CEV_BHT_CVS_NRM_INP_STB_MULTI_dCPM_Captify-SmallBusinessOwners','Active','','Display (PMP — Captify)','','','',''],
+['ttd','Programmatic (TTD)','nttf','Consideration — NTTF','TTD | Display | Hybrid NTTF','LZ_AO_PBM_MID_DIS_BS_NA_NA_NA_TTD-DIS-HYBRID-NTTF','Active','NTTF / Compliance — Mid-Funnel','Qstarts','','TRUE','Native Compliance Audiences — NTTF (NVD/BHT)','TTD_BS_PRS_DIS_PROG_TTD_EX_CEV_BHT_MID_NRM_PLT_NVD_MULTI_dCPM_NativeComplianceAudiences-NTTF','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','nttf','Consideration — NTTF','TTD | Display | Hybrid NTTF','LZ_AO_PBM_MID_DIS_BS_NA_NA_NA_TTD-DIS-HYBRID-NTTF','Active','NTTF / Compliance — Mid-Funnel','Qstarts','','TRUE','Native Compliance Audiences — NTTF (STB/BHT)','TTD_BS_PRS_DIS_PROG_TTD_EX_CEV_BHT_MID_NRM_PLT_STB_MULTI_dCPM_NativeComplianceAudiences-NTTF','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','nttf','Consideration — NTTF','TTD | Display | Hybrid NTTF','LZ_AO_PBM_MID_DIS_BS_NA_NA_NA_TTD-DIS-HYBRID-NTTF','Active','NTTF / Compliance — Mid-Funnel','Qstarts','','TRUE','Compliance Keyword — NTTF (NVD/CXT)','TTD_BS_PRS_DIS_PROG_TTD_EX_CEV_CXT_MID_NRM_PLT_NVD_MULTI_dCPM_ComplianceKeyword-NTTF','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','nttf','Consideration — NTTF','TTD | Display | Hybrid NTTF','LZ_AO_PBM_MID_DIS_BS_NA_NA_NA_TTD-DIS-HYBRID-NTTF','Active','NTTF / Compliance — Mid-Funnel','Qstarts','','TRUE','Compliance Keyword — NTTF (STB/CXT)','TTD_BS_PRS_DIS_PROG_TTD_EX_CEV_CXT_MID_NRM_PLT_STB_MULTI_dCPM_ComplianceKeyword-NTTF','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','nttf','Consideration — NTTF','TTD | Display | Hybrid NTTF','LZ_AO_PBM_MID_DIS_BS_NA_NA_NA_TTD-DIS-HYBRID-NTTF','Active','NTTF / Compliance — Mid-Funnel','Qstarts','','TRUE','WLAL SMB Non-Formation 180D — NTTF (NVD/LAL)','TTD_BS_PRS_DIS_PROG_TTD_EX_CEV_LAL_MID_NRM_PLT_NVD_MULTI_dCPM_WLAL-SMBPurchasersNonFormation-180d-NTTF','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','nttf','Consideration — NTTF','TTD | Display | Hybrid NTTF','LZ_AO_PBM_MID_DIS_BS_NA_NA_NA_TTD-DIS-HYBRID-NTTF','Active','NTTF / Compliance — Mid-Funnel','Qstarts','','TRUE','WLAL SMB Non-Formation 180D — NTTF (STB/LAL)','TTD_BS_PRS_DIS_PROG_TTD_EX_CEV_LAL_MID_NRM_PLT_STB_MULTI_dCPM_WLAL-SMBPurchasersNonFormation-180d-NTTF','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','nttf','Consideration — NTTF','TTD | Display | Retargeting NTTF','LZ_AO_PBM_MID_DIS_BS_NA_NA_NA_TTD-DIS-RET-NTTF','Active','NTTF / Compliance — Retargeting','Qstarts','','TRUE','All Page Abandoners Non-Formation — NTTF (NVD)','TTD_BS_RET_DIS_PROG_TTD_EX_CEV_CWT_MID_IMT_CLW_NVD_MULTI_dCPM_AllPageAbandonersNonFormations-NTTF','Active','','Display (Open Exchange)','','','',''],
+['ttd','Programmatic (TTD)','nttf','Consideration — NTTF','TTD | Display | Retargeting NTTF','LZ_AO_PBM_MID_DIS_BS_NA_NA_NA_TTD-DIS-RET-NTTF','Active','NTTF / Compliance — Retargeting','Qstarts','','TRUE','All Page Abandoners Non-Formation — NTTF (STB)','TTD_BS_RET_DIS_PROG_TTD_EX_CEV_CWT_MID_IMT_CLW_STB_MULTI_dCPM_AllPageAbandonersNonFormations-NTTF','Active','','Display (Open Exchange)','','','',''],
+['meta','Meta (FB/IG)','brand_nttf','Awareness — NTTF','Meta | NTTF Business Manager','LZ_AO_PBMIH_AWR_SOC_BS_NA_NA_NA_Meta-Awareness-NTFF-BusinessManager','Active','NTTF / Brand Awareness','Reach','','TRUE','NTTF Resonate — Business Manager (BHT)','FB_BS_PRS_SOC_SOC_X_X_CEV_BHT_AWR_FUT_INP_MULTI_MULTI_dCPM_NTTF-Resonate-BusinessManager','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','brand','Awareness','Meta | Brand Refresh','LZ_FY25_BRD_AWR_SOC_BRD_NA_NA_NA_META-BrandRefresh','Active','Brand Awareness / Paid Social','Reach','','FALSE','Resonate Audience (BHT)','FB_BRD_BRD_SOC_SOC_X_X_CEV_BHT_AWR_FUT_INP_MULTI_MULTI_dCPM_ResonateAudience','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','brand','Awareness','Meta | Brand Refresh','LZ_FY25_BRD_AWR_SOC_BRD_NA_NA_NA_META-BrandRefresh','Active','Brand Awareness / Paid Social','Reach','','FALSE','LAL Paid Outbound 5%','FB_BRD_BRD_SOC_SOC_X_X_CEV_LAL_AWR_FUT_PLT_MULTI_MULTI_dCPM_LAL-PaidOutbound5pct-LALTest','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','mid','Consideration — Qstarts','Meta | Brand Refresh Engagers - Qstart','LZ_FY25_PBMIH_MID_SOC_BS_NA_NA_NA_META-Qstart','Active','PBM / Consideration — Qstarts','Qstarts','','FALSE','Brand Refresh Engagers — Placement Test AN Excl','FB_BS_RET_SOC_SOC_X_X_CEV_ERT_MID_NRM_PLT_MULTI_MULTI_dCPM_BrandRefreshEngagers_PlacementTest-AudienceNetworkExcluded','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','mid','Consideration — Qstarts','Meta | Prospecting Native Interests - Qstart','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_Meta-PROS-Qstart','Active','PBM / Prospecting — Qstarts','Qstarts','','TRUE','SMB Interests','FB_BS_PRS_SOC_SOC_X_X_CEV_INTR_MID_NRM_PLT_MULTI_MULTI_dCPM_SMB-Interests','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','mid','Consideration — Qstarts','Meta | Prospecting Native Interests - Qstart','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_Meta-PROS-Qstart','Active','PBM / Prospecting — Qstarts','Qstarts','','TRUE','SMB Interests — Handle Test (Creator Handle)','FB_BS_PRS_SOC_SOC_X_X_CEV_INTR_MID_NRM_PLT_MULTI_MULTI_dCPM_SMB-Interests-HandleTest-CreatorHandle','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','mid','Consideration — Qstarts','Meta | Prospecting Native Interests - Qstart','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_Meta-PROS-Qstart','Active','PBM / Prospecting — Qstarts','Qstarts','','TRUE','SMB Interests — Handle Test (LZ Handle)','FB_BS_PRS_SOC_SOC_X_X_CEV_INTR_MID_NRM_PLT_MULTI_MULTI_dCPM_SMB-Interests-HandleTest-LZHandle','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','mid','Consideration — Qstarts','Meta | Prospecting Native Interests - Qstart','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_Meta-PROS-Qstart','Active','PBM / Prospecting — Qstarts','Qstarts','','TRUE','SMB Interests — Handle Test (Partnership Handle)','FB_BS_PRS_SOC_SOC_X_X_CEV_INTR_MID_NRM_PLT_MULTI_MULTI_dCPM_SMB-Interests-HandleTest-PartnershipHandle','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','nttf','Consideration — NTTF','Meta | Prospecting NTTF','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_Meta-PROS-NTTF-Segment-Cart-Created','Active','NTTF / Compliance — Prospecting','Segment Starts','','TRUE','NTTF Native Audience (INTR)','FB_BS_PRS_SOC_SOC_X_X_CEV_INTR_MID_NRM_PLT_MULTI_MULTI_dCPM_NTTF-NativeAudience','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','nttf','Consideration — NTTF','Meta | Prospecting NTTF','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_Meta-PROS-NTTF-Segment-Cart-Created','Active','NTTF / Compliance — Prospecting','Segment Starts','','TRUE','NTTF LAL — SMB Purchasers 2%','FB_BS_PRS_SOC_SOC_X_X_CEV_LAL_MID_NRM_PLT_MULTI_MULTI_dCPM_NTTF-LAL-SMBPurchasers2pct','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','nttf','Consideration — NTTF','Meta | Retargeting NTTF','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_Meta-RET-NTTF-Segment-Cart-Created','Active','NTTF / Compliance — Retargeting','Segment Starts','','TRUE','NTTF SMB Abandoners (CWT)','FB_BS_RET_SOC_SOC_X_X_CEV_CWT_MID_IMT_CLW_MULTI_MULTI_dCPM_NTTF-SMBAbandoners','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','nttf','Consideration — NTTF','Meta | NTTF Calendly - Traffic','LZ_AO_PBMIH_TRC_SOC_BS_NA_NA_NA_Meta-PROS-NTTF-Calendly','Active','NTTF / Lead Gen (Calendly)','Landing Page Views','','TRUE','NTTF LAL — SMB Purchasers 1% (Calendly)','FB_BS_PRS_SOC_SOC_X_X_CEV_LAL_TRC_NRM_PLT_MULTI_MULTI_dCPM_NTTF-LAL-SMBPurchasers1pct-Calendly','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','lower','Conversions','Meta | Retargeting Creator Handle Sandbox','LZ_AO_PBMIH_CON_SOC_BS_NA_NA_NA_META-RET-Sandbox','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Evergreen RT Consolidated — Sandbox Creator Handle','FB_BS_RET_SOC_SOC_X_X_CEV_CWT_CVS_IMT_CLW_MULTI_MULTI_dCPM_EvergreenRTConsolidated-Sandbox-CreatorHandle','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','lower','Conversions','Meta | Retargeting Evergreen','LZ_AO_PBMIH_CON_SOC_BS_NA_NA_NA_META-RETCons','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','BF Cart Abandoners 30D','FB_BS_RET_SOC_SOC_X_X_CEV_CWT_CVS_IMT_CLW_MULTI_MULTI_dCPM_BFCartAbandoners-30d','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','lower','Conversions','Meta | Retargeting Evergreen','LZ_AO_PBMIH_CON_SOC_BS_NA_NA_NA_META-RETCons','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','BF Page Abandoners 180D','FB_BS_RET_SOC_SOC_X_X_CEV_CWT_CVS_IMT_CLW_MULTI_MULTI_dCPM_BFPageAbandoners-180d','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','lower','Conversions','Meta | Retargeting Evergreen','LZ_AO_PBMIH_CON_SOC_BS_NA_NA_NA_META-RETCons','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Evergreen RT Consolidated','FB_BS_RET_SOC_SOC_X_X_CEV_CWT_CVS_IMT_CLW_MULTI_MULTI_dCPM_EvergreenRTConsolidated','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','lower','Conversions','Meta | Retargeting Evergreen','LZ_AO_PBMIH_CON_SOC_BS_NA_NA_NA_META-RETCons','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','Mercury Partnership','FB_BS_RET_SOC_SOC_X_X_CEV_CWT_CVS_IMT_CLW_MULTI_MULTI_dCPM_MercuryPartnership','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','lower','Conversions','Meta | ASC Sandbox — Creator Handle','LZ_FY25_PBMIH_CON_SOC_BS_NA_NA_NA_Meta-ASC-Sandbox-CreatorHandle','Active','PBM / ASC — Conversions','MTA 1yr Margin LTV ROAS','','FALSE','ASC Sandbox — Creator Handle','FB_BS_PRET_SOC_SOC_X_X_CEV_AUT_CVS_NRM_CWP_MULTI_MULTI_dCPM_ASCSandbox-CreatorHandle','Active','','FB/IG (Advantage+ Placements)','','','',''],
+['meta','Meta (FB/IG)','lower','Conversions','Meta | Retargeting Personal Services','LZ_AO_PBMIH_CON_SOC_PS_NA_NA_NA_META-RET-PS','Active','PBM / Retargeting — Personal Services','MTA 1yr Margin LTV ROAS','','FALSE','EP Page/Cart Abandoners','FB_PS_RET_SOC_SOC_X_X_CEV_CWT_CVS_IMT_CLW_MULTI_MULTI_dCPM_EPPage/CartAbandoners','Active','','FB/IG Feed, Stories, Reels','','','',''],
+['meta','Meta (FB/IG)','lower','Conversions','Meta | ASC Sandbox — Partnership AN Excl','LZ_AO_PBMIH_CON_SOC_BS_NA_NA_NA_Meta-ASC-Sandbox-Partnership-PlacementTest-AudienceNetworkExcluded','Active','PBM / ASC — Conversions','MTA 1yr Margin LTV ROAS','','TRUE','ASC Sandbox — Partnership Placement Test AN Excl','FB_BS_PRS_SOC_SOC_X_X_CEV_AUT_CVS_NRM_CWP_MULTI_MULTI_dCPM_ASCSandbox-Partnership-PlacementTest-AudienceNetworkExcluded','Active','','FB/IG Feed, Stories, Reels (AN Excluded)','','','',''],
+['meta','Meta (FB/IG)','lower','Conversions','Meta | ASC Mercury Partnership','LZ_AO_PBMIH_CON_SOC_BS_NA_NA_NA_Meta-ASC-MercuryPartnership','Active','PBM / ASC — Conversions','MTA 1yr Margin LTV ROAS','','TRUE','ASC Mercury Partnership','FB_BS_PRS_SOC_SOC_X_X_CEV_AUT_CVS_NRM_PLT_MULTI_MULTI_dCPM_ASC-MercuryPartnership','Active','','FB/IG (Advantage+ Placements)','','','',''],
+['meta','Meta (FB/IG)','lower','Conversions','Meta | ASC Evergreen','LZ_AO_PBMIH_CON_SOC_BS_NA_NA_NA_Meta-ASC-Evergreen','Active','PBM / ASC — Conversions','MTA 1yr Margin LTV ROAS','','TRUE','ASC Evergreen','FB_BS_PRS_SOC_SOC_X_X_CEV_AUT_CVS_NRM_PLT_MULTI_MULTI_dCPM_ASC-Evergreen','Active','','FB/IG (Advantage+ Placements)','','','',''],
+['reddit','Reddit','brand_nttf','Awareness — NTTF','Reddit | NTTF Business Manager','LZ_AO_PBMIH_AWR_SOC_BS_NA_NA_NA_Reddit-Awareness-NTTF-BusinessManager','Active','NTTF / Brand Awareness','Reach','','TRUE','NTTF Resonate — Business Manager (BHT)','RED_BS_PRS_SOC_SOC_X_X_CEV_BHT_AWR_FUT_INP_MULTI_MULTI_dCPM_NTTF-Resonate-BusinessManager','Active','','Reddit Feed','','','',''],
+['reddit','Reddit','brand_nttf','Awareness — NTTF','Reddit | NTTF Awareness','LZ_AO_BRD_AWR_SOC_BRD_NA_NA_NA_Reddit-NTTF-Awareness-6.1.26','Active','NTTF / Brand Awareness — Compliance','Reach','','TRUE','NTTF Native Audience Free-Form (INTR)','RED_BS_PRS_SOC_SOC_X_X_CEV_INTR_AWR_FUT_PLT_MULTI_MULTI_dCPM_NTTF-NativeAudience-FreeForm','Active','','Reddit Feed','','','',''],
+['reddit','Reddit','brand','Awareness','RED | Brand Refresh Awareness','LZ_FY26_BRD_AWR_SOC_BRD_NA_NA_NA_Reddit-BrandRefresh-Awareness-6.1.26','Active','Brand Awareness / Reddit','Reach','','TRUE','Resonate Audience (BHT)','RED_BRD_BRD_SOC_SOC_X_X_CEV_BHT_AWR_FUT_INP_S-S-V_MULTI_dCPM_ResonateAudience','Active','','Reddit Feed, In-Stream','','','',''],
+['reddit','Reddit','brand','Awareness','RED | Brand Refresh Awareness','LZ_FY26_BRD_AWR_SOC_BRD_NA_NA_NA_Reddit-BrandRefresh-Awareness-6.1.26','Active','Brand Awareness / Reddit','Reach','','TRUE','Native Audience Free-Form (INTR)','RED_BRD_BRD_SOC_SOC_X_X_CEV_INTR_AWR_FUT_PLT_MULTI_MULTI_dCPM_NativeAudience-FreeForm','Active','','Reddit Feed, In-Stream','','','',''],
+['reddit','Reddit','brand','Awareness','RED | Brand Refresh Awareness','LZ_FY26_BRD_AWR_SOC_BRD_NA_NA_NA_Reddit-BrandRefresh-Awareness-6.1.26','Active','Brand Awareness / Reddit','Reach','','TRUE','Native Audience (INTR)','RED_BRD_BRD_SOC_SOC_X_X_CEV_INTR_AWR_FUT_PLT_S-S-V_MULTI_dCPM_NativeAudience','Active','','Reddit Feed, In-Stream','','','',''],
+['reddit','Reddit','brand','Awareness','RED | Brand Refresh Awareness','LZ_FY26_BRD_AWR_SOC_BRD_NA_NA_NA_Reddit-BrandRefresh-Awareness-6.1.26','Active','Brand Awareness / Reddit','Reach','','TRUE','LAL','RED_BRD_BRD_SOC_SOC_X_X_CEV_LAL_AWR_FUT_PLT_S-S-V_MULTI_dCPM_LAL','Active','','Reddit Feed, In-Stream','','','',''],
+['reddit','Reddit','brand','Awareness','RED | Brand Refresh Video Views','LZ_FY26_BRD_VV_SOC_BRD_NA_NA_NA_Reddit-BrandRefresh-VideoViews-6.1.26','Active','Brand Awareness / Video Views','CPM, VCR','','TRUE','Resonate Audience (BHT)','RED_BRD_BRD_SOC_SOC_X_X_CEV_BHT_VDV_FUT_INP_S-S-V_MULTI_dCPM_ResonateAudience','Active','','Reddit In-Stream Video','','','',''],
+['reddit','Reddit','brand','Awareness','RED | Brand Refresh Video Views','LZ_FY26_BRD_VV_SOC_BRD_NA_NA_NA_Reddit-BrandRefresh-VideoViews-6.1.26','Active','Brand Awareness / Video Views','CPM, VCR','','TRUE','Native Audience (INTR)','RED_BRD_BRD_SOC_SOC_X_X_CEV_INTR_VDV_FUT_PLT_S-S-V_MULTI_dCPM_NativeAudience','Active','','Reddit In-Stream Video','','','',''],
+['reddit','Reddit','brand','Awareness','RED | Brand Refresh Video Views','LZ_FY26_BRD_VV_SOC_BRD_NA_NA_NA_Reddit-BrandRefresh-VideoViews-6.1.26','Active','Brand Awareness / Video Views','CPM, VCR','','TRUE','LAL','RED_BRD_BRD_SOC_SOC_X_X_CEV_LAL_VDV_FUT_PLT_S-S-V_MULTI_dCPM_LAL','Active','','Reddit In-Stream Video','','','',''],
+['reddit','Reddit','mid','Consideration — Qstarts','Reddit | Prospecting - Keywords/Communities - Qstart','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_Reddit-PROS-Qstart-2.1.26','Active','PBM / Prospecting — Qstarts','Qstarts','','TRUE','Keyword Targeting','RED_BS_PRS_SOC_SOC_X_X_CEV_ERT_MID_NRM_PLT_MULTI_MULTI_dCPM_KeywordTargeting','Active','','Reddit Feed','','','',''],
+['reddit','Reddit','mid','Consideration — Qstarts','Reddit | Prospecting - Keywords/Communities - Qstart','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_Reddit-PROS-Qstart-2.1.26','Active','PBM / Prospecting — Qstarts','Qstarts','','TRUE','Reddit Communities','RED_BS_PRS_SOC_SOC_X_X_CEV_ERT_MID_NRM_PLT_MULTI_MULTI_dCPM_RedditCommunities','Active','','Reddit Feed','','','',''],
+['reddit','Reddit','mid','Consideration — Qstarts','Reddit | Prospecting Max Qstarts','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_Reddit-PROS-RedditMax-Qstart','Active','PBM / Prospecting — Qstarts (Reddit Max)','Qstarts','','TRUE','Consideration Max Qstarts','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_Reddit-PROS-RedditMax-Qstart','Active','','Reddit Feed (Reddit Max)','','','',''],
+['reddit','Reddit','traffic','Consideration — Traffic','Reddit | Consideration - Traffic','LZ_FY26_PBMIH_TRC_SOC_BS_NA_NA_NA_Reddit-Consideration-6.1.26','Active','PBM / Consideration — Traffic','CPC, CTR','','TRUE','Brand Refresh Engagers Free-Form','RED_BS_RET_SOC_SOC_X_X_CEV_ERT_TRC_NRM_PLT_MULTI_MULTI_dCPM_BrandRefreshEngagers-FreeForm','Active','','Reddit Feed','','','',''],
+['reddit','Reddit','nttf','Consideration — NTTF','Reddit | Prospecting NTTF','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_Reddit-PROS-NTTF-Qstart','Active','NTTF / Compliance — Prospecting','Qstarts','','TRUE','NTTF Native Audience (INTR)','RED_BS_PRS_SOC_SOC_X_X_CEV_INTR_MID_NRM_PLT_MULTI_MULTI_dCPM_NTTF-NativeAudience','Active','','Reddit Feed','','','',''],
+['reddit','Reddit','nttf','Consideration — NTTF','Reddit | Prospecting NTTF','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_Reddit-PROS-NTTF-Qstart','Active','NTTF / Compliance — Prospecting','Qstarts','','TRUE','NTTF LAL — SMB Purchasers','RED_BS_PRS_SOC_SOC_X_X_CEV_LAL_MID_NRM_PLT_MULTI_MULTI_dCPM_NTTF-LAL-SMBPurchasers','Active','','Reddit Feed','','','',''],
+['reddit','Reddit','nttf','Consideration — NTTF','Reddit | NTTF Consideration - Traffic','LZ_AO_PBMIH_TRC_SOC_BS_NA_NA_NA_Reddit-NTTF-Consideration-6.1.26','Active','NTTF / Compliance — Consideration','Qstarts','','TRUE','NTTF Native Audience Free-Form','RED_BS_PRS_SOC_SOC_X_X_CEV_INTR_TRC_NRM_PLT_MULTI_MULTI_dCPM_NTTF-NativeAudience-FreeForm','Active','','Reddit Feed','','','',''],
+['reddit','Reddit','nttf','Consideration — NTTF','Reddit | Retargeting NTTF','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_Reddit-RET-NTTF-Qstart','Active','NTTF / Compliance — Retargeting','Qstarts','','TRUE','NTTF SMB Abandoners (CWT)','RED_BS_RET_SOC_SOC_X_X_CEV_CWT_MID_IMT_CLW_MULTI_MULTI_dCPM_NTTF-SMBAbandoners','Active','','Reddit Feed','','','',''],
+['reddit','Reddit','nttf','Consideration — NTTF','Reddit | NTTF Calendly - Traffic','LZ_AO_PBMIH_TRC_SOC_BS_NA_NA_NA_Reddit-PROS-NTTF-Calendly','Active','NTTF / Lead Gen (Calendly)','Link Clicks','','TRUE','NTTF LAL — Calendly','RED_BS_PRS_SOC_SOC_X_X_CEV_LAL_TRC_NRM_PLT_MULTI_MULTI_dCPM_NTTF-LAL-Calendly','Active','','Reddit Feed','','','',''],
+['reddit','Reddit','lower','Conversions','Reddit | Prospecting Max Conversion','LZ_AO_PBMIH_CON_SOC_BS_NA_NA_NA_Reddit-PROS-RedditMax-Conversion','Active','PBM / Prospecting — Conversions (Reddit Max)','MTA 1yr Margin LTV ROAS','','TRUE','Reddit Max Conversion','LZ_AO_PBMIH_CON_SOC_BS_NA_NA_NA_Reddit-PROS-RedditMax-Conversion','Active','','Reddit Feed (Reddit Max)','','','',''],
+['reddit','Reddit','lower','Conversions','Reddit | Retargeting Conversion','LZ_AO_PBMIH_CON_SOC_BS_NA_NA_NA_Reddit-RET-Conversion','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','TRUE','RET All Abandoners','RED_BS_RET_SOC_SOC_X_X_CEV_CLT_CVS_NRM_CLT_MULTI_MULTI_dCPM_RET-AllAbandoners','Active','','Reddit Feed','','','',''],
+['reddit','Reddit','lower','Conversions','Reddit | Retargeting Conversion','LZ_AO_PBMIH_CON_SOC_BS_NA_NA_NA_Reddit-RET-Conversion','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','TRUE','RET BF Cart Abandoners','RED_BS_RET_SOC_SOC_X_X_CEV_CLT_CVS_NRM_CLT_MULTI_MULTI_dCPM_RET-BFCartAbandoners','Active','','Reddit Feed','','','',''],
+['reddit','Reddit','lower','Conversions','Reddit | Retargeting Conversion','LZ_AO_PBMIH_CON_SOC_BS_NA_NA_NA_Reddit-RET-Conversion','Active','PBM / Retargeting — Conversions','MTA 1yr Margin LTV ROAS','','TRUE','RET BF Page Abandoners','RED_BS_RET_SOC_SOC_X_X_CEV_CLT_CVS_NRM_CLT_MULTI_MULTI_dCPM_RET-BFPageAbandoners','Active','','Reddit Feed','','','',''],
+['google_yt','YouTube','brand','Awareness','YT | Video Reach','LZ_AO_BRD_AWR_VID_BRD_NA_NA_VRC','Active','Brand Awareness / Video Reach','CPM, VCR','','FALSE','Resonate Lookalike','YT_BS_BRD_VID_PROG_GA_YT_CEV_INTR_RCH_NRM_PLT_CDO_MULTI_dCPM_ResonateLookalike','Active','','YouTube In-Stream','','','',''],
+['google_yt','YouTube','brand','Awareness','YT | Video Reach','LZ_AO_BRD_AWR_VID_BRD_NA_NA_VRC','Active','Brand Awareness / Video Reach','CPM, VCR','','FALSE','Resonate Brand Audience','YT_BS_BRD_VID_PROG_GA_YT_CEV_INTR_RCH_NRM_PLT_CDO_MULTI_dCPM_ResonateBrandAudience','Active','','YouTube In-Stream','','','',''],
+['google_yt','YouTube','brand','Awareness','YT | Video Reach | DSK-MOB','LZ_AO_BRD_AWR_VID_BRD_NA_NA_VRC_DSK-MOB','Active','Brand Awareness / Video Reach (DSK+MOB)','CPM, VCR','','FALSE','Brand Keywords','YT_BS_PRS_VID_PROG_GA_YT_CEV_SKT_CVS_IMT_PLT_V-SK_MULTI_dCPM_BrandKWs','Active','','YouTube In-Stream (DSK/MOB)','','','',''],
+['google_yt','YouTube','brand','Awareness','YT | Video Reach | DSK-MOB','LZ_AO_BRD_AWR_VID_BRD_NA_NA_VRC_DSK-MOB','Active','Brand Awareness / Video Reach (DSK+MOB)','CPM, VCR','','FALSE','Resonate Brand Audience','YT_BS_BRD_VID_PROG_GA_YT_CEV_INTR_RCH_NRM_PLT_CDO_MULTI_dCPM_ResonateBrandAudience','Active','','YouTube In-Stream (DSK/MOB)','','','',''],
+['google_yt','YouTube','brand','Awareness','YT | Video View','LZ_AO_BRD_AWR_VID_BRD_NA_NA_VVC','Active','Brand Awareness / Video View','CPM, VCR, Views','','FALSE','Resonate Lookalike','YT_BS_BRD_VID_PROG_GA_YT_CEV_INTR_VDV_NRM_PLT_CDO_MULTI_dCPM_ResonateLookalike','Active','','YouTube In-Stream','','','',''],
+['google_yt','YouTube','brand','Awareness','YT | Video View','LZ_AO_BRD_AWR_VID_BRD_NA_NA_VVC','Active','Brand Awareness / Video View','CPM, VCR, Views','','FALSE','Resonate Brand Audience','YT_BS_BRD_VID_PROG_GA_YT_CEV_INTR_VDV_NRM_PLT_CDO_MULTI_dCPM_ResonateBrandAudience','Active','','YouTube In-Stream','','','',''],
+['google_yt','YouTube','brand','Awareness','YT | Video Reach | NONSKIP','LZ_AO_BRD_AWR_VID_BRD_NA_NA_VRC_NONSKIP','Active','Brand Awareness / Video Reach (Non-Skip)','CPM, VCR','','TRUE','Resonate Brand Audience','YT_BS_BRD_VID_PROG_GA_YT_CEV_INTR_RCH_NRM_PLT_CDO_MULTI_dCPM_ResonateBrandAudience','Active','','YouTube Non-Skip In-Stream','','','',''],
+['google_yt','YouTube','brand','Awareness','YT | Video Reach | NONSKIP','LZ_AO_BRD_AWR_VID_BRD_NA_NA_VRC_NONSKIP','Active','Brand Awareness / Video Reach (Non-Skip)','CPM, VCR','','TRUE','Resonate Lookalike','YT_BS_BRD_VID_PROG_GA_YT_CEV_INTR_RCH_NRM_PLT_CDO_MULTI_dCPM_ResonateLookalike','Active','','YouTube Non-Skip In-Stream','','','',''],
+['google_yt','YouTube','brand','Awareness','YT | Video Reach | DSK-MOB | NONSKIP','LZ_AO_BRD_AWR_VID_BRD_NA_NA_VRC_DSK-MOB_NONSKIP','Active','Brand Awareness / Video Reach (DSK+MOB Non-Skip)','CPM, VCR','','TRUE','Resonate Brand Audience','YT_BS_BRD_VID_PROG_GA_YT_CEV_INTR_RCH_NRM_PLT_CDO_MULTI_dCPM_ResonateBrandAudience','Active','','YouTube Non-Skip (DSK/MOB)','','','',''],
+['google_yt','YouTube','brand','Awareness','YT | Video Reach | DSK-MOB | NONSKIP','LZ_AO_BRD_AWR_VID_BRD_NA_NA_VRC_DSK-MOB_NONSKIP','Active','Brand Awareness / Video Reach (DSK+MOB Non-Skip)','CPM, VCR','','TRUE','Resonate Lookalike','YT_BS_BRD_VID_PROG_GA_YT_CEV_INTR_RCH_NRM_PLT_CDO_MULTI_dCPM_ResonateLookalike','Active','','YouTube Non-Skip (DSK/MOB)','','','',''],
+['google_yt','YouTube','brand','Awareness','YT | Audio','LZ_AO_BRD_AWR_VID_BRD_NA_NA_NA_YT-AUD','Active','Brand Awareness / Audio','CPM, Audio Completion Rate','','TRUE','All Topics','YT_BS_BRD_AUD_PROG_GA_YT_CEV_CNT_RCH_NRM_PLT_AD_MULTI_dCPM_TopicAll','Active','','YouTube Audio Ads','','','',''],
+['google_yt','YouTube','brand','Awareness','YT | Audio','LZ_AO_BRD_AWR_VID_BRD_NA_NA_NA_YT-AUD','Active','Brand Awareness / Audio','CPM, Audio Completion Rate','','TRUE','Resonate Brand Audience','YT_BS_BRD_AUD_PROG_GA_YT_CEV_INTR_RCH_NRM_PLT_AD_MULTI_dCPM_ResonateBrandAudience','Active','','YouTube Audio Ads','','','',''],
+['google_yt','YouTube','nttf','Consideration — NTTF','YT | Lookalike NTTF','LZ_AO_PBM_MID_VID_BS_NA_NA_NA_YT-LAL-NTTF','Active','NTTF / YouTube','Qstarts','','TRUE','Purchasers Lookalike (Excl. Formations)','YT_BS_RET_VID_PROG_GA_YT_CEV_WRT_CVS_IMT_WEB_V-SK_MULTI_dCPM_PurchasersLAL (Excl Formations)','Active','','YouTube In-Stream','','','',''],
+['google_yt','YouTube','nttf','Consideration — NTTF','YT | Retargeting NTTF','LZ_AO_PBM_MID_VID_BS_NA_NA_NA_YT-RET-NTTF','Active','NTTF / YouTube','Qstarts','','TRUE','SMB Abandoners (Excl. Formations)','YT_BS_RET_VID_PROG_GA_YT_CEV_WRT_CVS_IMT_WEB_V-SK_MULTI_dCPM_SMBAbandoners (Excl Formations)','Active','','YouTube In-Stream','','','',''],
+['google_yt','YouTube','lower','Conversions','YT | Demand Gen | PRS','LZ_AO_PBM_CON_VID_BS_NA_NA_YT-PRS','Active','PBM / YouTube — Prospecting','MTA 1yr Margin LTV ROAS','','FALSE','Interest Affinities','YT_BS_PRS_VID_PROG_GA_YT_CEV_INTR_CVS_NRM_PLT_V-SK_MULTI_dCPM_InterestAffinities','Active','','YouTube In-Stream + Discovery','','','',''],
+['google_yt','YouTube','lower','Conversions','YT | Demand Gen | PRS','LZ_AO_PBM_CON_VID_BS_NA_NA_YT-PRS','Active','PBM / YouTube — Prospecting','MTA 1yr Margin LTV ROAS','','FALSE','Brand Keywords','YT_BS_PRS_VID_PROG_GA_YT_CEV_SKT_CVS_IMT_PLT_V-SK_MULTI_dCPM_BrandKWs','Active','','YouTube In-Stream + Discovery','','','',''],
+['google_yt','YouTube','lower','Conversions','YT | Demand Gen | PRS','LZ_AO_PBM_CON_VID_BS_NA_NA_YT-PRS','Active','PBM / YouTube — Prospecting','MTA 1yr Margin LTV ROAS','','FALSE','LLC Non-Brand Keywords','YT_BS_PRS_VID_PROG_GA_YT_CEV_SKT_CVS_IMT_PLT_V-SK_MULTI_dCPM_LLCNonBrandKWs','Active','','YouTube In-Stream + Discovery','','','',''],
+['google_yt','YouTube','lower','Conversions','YT | Demand Gen | PRS','LZ_AO_PBM_CON_VID_BS_NA_NA_YT-PRS','Active','PBM / YouTube — Prospecting','MTA 1yr Margin LTV ROAS','','FALSE','Resonate Lookalike (VDV)','YT_BS_BRD_VID_PROG_GA_YT_CEV_INTR_VDV_NRM_PLT_CDO_MULTI_dCPM_ResonateLookalike','Active','','YouTube In-Stream + Discovery','','','',''],
+['google_yt','YouTube','lower','Conversions','YT | Demand Gen | Retargeting','LZ_AO_PBM_CON_VID_BS_NA_NA_YT-RET','Active','PBM / YouTube — Retargeting','MTA 1yr Margin LTV ROAS','','FALSE','All Abandoners 30D','YT_BS_RET_VID_PROG_GA_YT_CEV_WRT_CVS_IMT_WEB_V-SK_MULTI_dCPM_AllAbandoners-30d','Active','','YouTube In-Stream + Discovery','','','',''],
+['google_yt','YouTube','lower','Conversions','YT | Demand Gen | Retargeting','LZ_AO_PBM_CON_VID_BS_NA_NA_YT-RET','Active','PBM / YouTube — Retargeting','MTA 1yr Margin LTV ROAS','','FALSE','LLC Page Abandoners','YT_BS_RET_VID_PROG_GA_YT_CEV_CWT_CVS_IMT_CLW_V-SK_MULTI_dCPM_LLCPageAbandoners','Active','','YouTube In-Stream + Discovery','','','',''],
+['google_yt','YouTube','lower','Conversions','YT | Demand Gen | Retargeting','LZ_AO_PBM_CON_VID_BS_NA_NA_YT-RET','Active','PBM / YouTube — Retargeting','MTA 1yr Margin LTV ROAS','','FALSE','EP Abandoners','YT_BS_RET_VID_PROG_GA_YT_CEV_CWT_CVS_IMT_CLW_V-SK_MULTI_dCPM_EPAbandoners','Active','','YouTube In-Stream + Discovery','','','',''],
+['google_yt','YouTube','lower','Conversions','YT | Demand Gen | Retargeting','LZ_AO_PBM_CON_VID_BS_NA_NA_YT-RET','Active','PBM / YouTube — Retargeting','MTA 1yr Margin LTV ROAS','','FALSE','LLC Abandoners 180D','YT_BS_RET_VID_PROG_GA_YT_CEV_CWT_CVS_IMT_CLW_V-SK_MULTI_dCPM_LLCAbandoners-180d','Active','','YouTube In-Stream + Discovery','','','',''],
+['google_yt','YouTube','lower','Conversions','YT | Demand Gen | Retargeting','LZ_AO_PBM_CON_VID_BS_NA_NA_YT-RET','Active','PBM / YouTube — Retargeting','MTA 1yr Margin LTV ROAS','','FALSE','YouTube Engagers','YT_BS_RET_VID_PROG_GA_YT_CEV_ERT_CVS_IMT_PLT_V-SK_MULTI_dCPM_YTEngagers','Active','','YouTube In-Stream + Discovery','','','',''],
+['google_yt','YouTube','lower','Conversions','YT | Demand Gen | Retargeting','LZ_AO_PBM_CON_VID_BS_NA_NA_YT-RET','Active','PBM / YouTube — Retargeting','MTA 1yr Margin LTV ROAS','','FALSE','BS Article Abandoners 7D','YT_BS_RET_VID_PROG_GA_YT_CEV_WRT_CVS_IMT_WEB_V-SK_MULTI_dCPM_BSArticleAbandoners-7d','Active','','YouTube In-Stream + Discovery','','','',''],
+['google_yt','YouTube','lower','Conversions','YT | Demand Gen | Retargeting','LZ_AO_PBM_CON_VID_BS_NA_NA_YT-RET','Active','PBM / YouTube — Retargeting','MTA 1yr Margin LTV ROAS','','FALSE','LLC Cart Abandoners','YT_BS_RET_VID_PROG_GA_YT_CEV_CWT_CVS_IMT_CLW_V-SK_MULTI_dCPM_LLCCartAbandoners','Active','','YouTube In-Stream + Discovery','','','',''],
+['google_yt','YouTube','lower','Conversions','YT | Demand Gen | Retargeting','LZ_AO_PBM_CON_VID_BS_NA_NA_YT-RET','Active','PBM / YouTube — Retargeting','MTA 1yr Margin LTV ROAS','','FALSE','Non-LLC BS Abandoners 180D','YT_BS_RET_VID_PROG_GA_YT_CEV_CWT_CVS_IMT_CLW_V-SK_MULTI_dCPM_NonLLCBSAbandoners-180d','Active','','YouTube In-Stream + Discovery','','','',''],
+['google_yt','YouTube','lower','Conversions','YT | Demand Gen | Retargeting','LZ_AO_PBM_CON_VID_BS_NA_NA_YT-RET','Active','PBM / YouTube — Retargeting','MTA 1yr Margin LTV ROAS','','FALSE','LLC Overview Abandoners 180D','YT_BS_RET_VID_PROG_GA_YT_CEV_WRT_CVS_IMT_WEB_V-SK_MULTI_dCPM_LLCOverviewAbandoners-180d','Active','','YouTube In-Stream + Discovery','','','',''],
+['linkedin','LinkedIn','nttf','Consideration — NTTF','LinkedIn | NTTF Qstarts','LZ_AO_PBMIH_MID_SOC_BS_NA_NA_NA_LinkedIn-PROS-NTTF-Qstart','Active','NTTF / LinkedIn — Prospecting','Qstarts','','TRUE','NTTF Native Audience - Qstart','LKD_BS_PRS_SOC_SOC_X_X_CEV_INTR_MID_NRM_PLT_MULTI_MULTI_dCPM_NTTF-NativeAudience-Qstart','Active','','LinkedIn Feed','','','','']
+];
+
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function rowToObj(a){const o={};COLS.forEach((k,i)=>{o[k]=a[i]!==undefined?a[i]:'';});return o;}
+function parseCSVLine(line){const r=[];let cur='';let inQ=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){r.push(cur);cur='';}else{cur+=c;}}r.push(cur);return r;}
+function csvToRows(text){
+  const lines=text.split(/\r?\n/);if(lines.length<2)return[];
+  const hdrs=parseCSVLine(lines[0]).map(h=>h.trim().replace(/^"|"$/g,''));
+  return lines.slice(1).filter(l=>l.trim()).map(l=>{
+    const vals=parseCSVLine(l);const o={};
+    hdrs.forEach((h,i)=>{o[h]=(vals[i]||'').trim().replace(/^"|"$/g,'');});
+    return o;
+  }).filter(o=>o.channel&&o.campaign_name);
+}
+function buildHierarchy(rows){
+  const cm={};
+  rows.forEach(row=>{
+    const ch=row.channel;
+    if(!cm[ch])cm[ch]={id:ch,label:row.channel_label,funnels:{},_fo:[]};
+    const f=row.funnel;
+    if(!cm[ch].funnels[f]){cm[ch].funnels[f]={id:f,label:row.funnel_label,campaigns:{},_co:[]};cm[ch]._fo.push(f);}
+    const cn=row.campaign_name;
+    if(!cm[ch].funnels[f].campaigns[cn]){
+      cm[ch].funnels[f].campaigns[cn]={label:row.campaign_label,name:cn,status:row.campaign_status,funnel:f,
+        objective:row.objective,kpis:row.kpis,notes:row.campaign_notes,
+        is_new:String(row.is_new_2026).toUpperCase()==='TRUE',adsets:[]};
+      cm[ch].funnels[f]._co.push(cn);
+    }
+    if(row.adset_label)cm[ch].funnels[f].campaigns[cn].adsets.push({
+      label:row.adset_label,techname:row.adset_techname,status:row.adset_status,
+      audience:row.audience_size,placements:row.placements,targeting:row.targeting,
+      inventory:row.inventory,creatives:row.creatives,notes:row.adset_notes
+    });
+  });
+  return cm;
+}
+let _cid=0;
+function nid(){return'c'+(++_cid);}
+function isND(adsets){return adsets.length===1&&adsets[0].label.toLowerCase().includes('not documented');}
+function adLbl(adsets,adterm){if(isND(adsets))return adterm+' not in source deck';const s=adterm.replace(/s$/,'');return adsets.length+' '+(adsets.length===1?s:adterm);}
+function buildAS(a){
+  function fmtAud(txt){
+    if(!txt)return'';
+    // Split Incl / Excl if both present in one field
+    const parts=txt.split(/\s*\|\s*(?=Excl:)/i);
+    return parts.map(p=>p.startsWith('Excl:')?'<span class="excl-chip">&#10007; '+esc(p.replace(/^Excl:\s*/i,''))+'</span>':'<span class="tgt" title="'+esc(p)+'">'+esc(p)+'</span>').join('');
+  }
+  function fmtNote(txt){
+    if(!txt)return'';
+    if(/^Excl:/i.test(txt)){
+      return'<div class="excl-note"><span class="excl-badge">&#10007; Excl</span>'+esc(txt.replace(/^Excl:\s*/i,''))+'</div>';
+    }
+    return'<div class="anote">'+esc(txt)+'</div>';
+  }
+  const chips=[
+    a.inventory?'<span class="inv">'+esc(a.inventory)+'</span>':'',
+    a.targeting?fmtAud(a.targeting):'',
+  ].filter(Boolean).join('');
+  const agProd=getAgProductLabel(a.techname,a.label);
+  const PROD_COLOR2={Compliance:'#dbeafe|#1e40af',Consumer:'#ffedd5|#c2410c',Formations:'#dcfce7|#15803d'};
+  const[agBg,agCl]=(PROD_COLOR2[agProd]||'#f3f4f6|#374151').split('|');
+  const agChip='<span style="display:inline-block;margin:2px 4px 4px 0;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700;background:'+agBg+';color:'+agCl+'">'+esc(agProd)+'</span>';
+  let _tc=getTgtCode(a.techname);if((a.techname||'').includes('RedditMax'))_tc='MAX';
+  const tgtLbl=TARGETING_CODES[_tc]||'';
+  const RETGT_CODES={CWT:1,WRT:1,ERT:1,CLT:1};
+  const tgtChip=tgtLbl?'<span style="display:inline-block;margin:2px 4px 4px 0;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600;background:'+(RETGT_CODES[_tc]?'#fef3c7':'#f3e8ff')+';color:'+(RETGT_CODES[_tc]?'#92400e':'#6b21a8')+'">'+esc(tgtLbl)+'</span>':'';
+  const labelChips=agChip+tgtChip;
+  return '<div class="ac" data-targeting="'+_tc+'"><div class="al">'+esc(a.label)+'</div>'+(a.techname?'<div class="an">'+esc(a.techname)+'</div>':'')+'<div class="ad">'+labelChips+(chips?'<span style="margin-left:4px"></span>'+chips:'')+'</div>'+'</div>';
+}
+function buildCard(camp,adterm){
+  const id=nid();const p=camp.status==='Paused';
+  const prods=getProductLabels(camp.name,camp.adsets);
+  const PROD_COLOR={Compliance:'#dbeafe|#1e40af',Consumer:'#ffedd5|#c2410c',Formations:'#dcfce7|#15803d'};
+  const prodChips=prods.map(pr=>{const[bg,cl]=(PROD_COLOR[pr]||'#f3f4f6|#374151').split('|');return'<span class="ch2" style="background:'+bg+';color:'+cl+';font-weight:700">'+esc(pr)+'</span>';}).join('');
+  const chips=[
+    prodChips,
+    camp.kpis?'<span class="ch2 kpi">KPIs: '+esc(camp.kpis)+'</span>':'',
+    p?'<span class="ch2 paused">PAUSED</span>':'',
+  ].filter(Boolean).join('');
+  const nd=isND(camp.adsets);
+  return '<div class="card'+(p?' paused':'')+'" id="'+id+'" data-products="'+esc(prods.join(','))+'"><div class="ch" onclick="tc(\''+id+'\')"><div class="ct">&#9658;</div><div class="cm"><div class="cl">'+esc(camp.label)+'</div><div class="cn">'+esc(camp.name)+'</div><div class="cme">'+chips+'</div></div><div class="cr"><span class="ab'+(nd?' nodoc':'')+'">'+adLbl(camp.adsets,adterm)+'</span></div></div><div class="asc">'+camp.adsets.map(buildAS).join('')+'</div></div>';
+}
+let _ds='default',_ft=null;
+function render(cm){
+  _cid=0;
+  // Build tabs — All Platforms first, then per-channel
+  const allCC=CHANNEL_ORDER.reduce((n,ch)=>{const d=cm[ch.id];return n+(d?Object.values(d.funnels).reduce((m,f)=>m+Object.keys(f.campaigns).length,0):0);},0);
+  const tabsHtml='<div class="tab active" onclick="sw(\'all-platforms\',this)"><span>All Platforms</span><span class="tc">'+allCC+'</span></div>'+CHANNEL_ORDER.map(ch=>{
+    const d=cm[ch.id];
+    const cnt=d?Object.values(d.funnels).reduce((n,f)=>n+Object.keys(f.campaigns).length,0):'&mdash;';
+    return '<div class="tab" onclick="sw(\''+ch.id+'\',this)"><span>'+esc(ch.label)+'</span><span class="tc">'+cnt+'</span></div>';
+  }).join('');
+  document.getElementById('tabs-container').innerHTML=tabsHtml;
+
+  // All Platforms panel: merge all channels grouped by funnel
+  function buildAllPlatforms(){
+    const merged={};
+    CHANNEL_ORDER.forEach(ch=>{
+      const d=cm[ch.id];if(!d)return;
+      FUNNEL_ORDER.forEach(fid=>{
+        if(!d.funnels[fid])return;
+        if(!merged[fid])merged[fid]={label:d.funnels[fid].label,campaigns:{},_co:[]};
+        d.funnels[fid]._co.forEach(cn=>{
+          const camp=d.funnels[fid].campaigns[cn];
+          const key=ch.id+'||'+cn;
+          merged[fid].campaigns[key]=Object.assign({},camp,{label:'['+ch.label+'] '+camp.label});
+          merged[fid]._co.push(key);
+        });
+      });
+    });
+    const funnels=FUNNEL_ORDER.filter(f=>merged[f]);
+    const cc=funnels.reduce((n,f)=>n+Object.keys(merged[f].campaigns).length,0);
+    const ac=funnels.reduce((n,f)=>n+Object.values(merged[f].campaigns).reduce((m,c)=>m+(isND(c.adsets)?0:c.adsets.length),0),0);
+    const ctrlsHtml='<div class="ctrl-row"><label class="ctrl-lbl">Funnel</label><select id="ff-all-platforms" class="ctrl-sel" onchange="ff(\'all-platforms\')"><option value="all">All Funnels</option><option value="awareness">Awareness</option><option value="consideration">Consideration</option><option value="conversion">Conversion</option></select><label class="ctrl-lbl">Product</label><select id="pf-all-platforms" class="ctrl-sel" onchange="ff(\'all-platforms\')"><option value="all">All Products</option><option value="Formations">Formations</option><option value="Compliance">Compliance</option><option value="Consumer">Consumer</option></select><label class="ctrl-lbl">Targeting</label><select id="tf-all-platforms" class="ctrl-sel" onchange="ff(\'all-platforms\')"><option value="all">All Targeting</option><optgroup label="-- Prospecting --"><option value="BHT">Behavioral</option><option value="LAL">Lookalike</option><option value="INTR">Interest / Native</option><option value="CXT">Contextual</option><option value="SKT">Keyword</option><option value="CNT">Topic / Content</option><option value="AUT">Automated</option></optgroup><optgroup label="-- Retargeting --"><option value="CWT">1P Retargeting</option><option value="ERT">Engaged Audience</option></optgroup></select></div>';
+    let cards='';
+    funnels.forEach(fid=>{
+      const fu=merged[fid];
+      cards+='<div class="fs" data-f="'+fid+'"><div class="fh"><span class="fb2 '+fid+'">'+esc(fu.label)+'</span><div class="fl"></div></div>';
+      fu._co.forEach(cn=>{cards+=buildCard(fu.campaigns[cn],'Ad Sets');});
+      cards+='</div>';
+    });
+    return '<div class="ch-content active" id="ch-all-platforms"><div class="controls">'+ctrlsHtml+'</div><div class="stats"><div class="sp"><div class="sl">Campaigns</div><div class="sv">'+cc+'</div></div><div class="sp"><div class="sl">Ad Sets</div><div class="sv">'+ac+'</div></div></div><div class="cc" id="cc-all-platforms">'+cards+'</div></div>';
+  }
+
+  // Per-channel panels
+  const contentHtml=CHANNEL_ORDER.map(ch=>{
+    const d=cm[ch.id];
+    if(!d)return '<div class="ch-content" id="ch-'+ch.id+'"><div class="empty"><h3>'+esc(ch.label)+'</h3><p>No active campaigns at the moment.</p></div></div>';
+    const funnels=FUNNEL_ORDER.filter(f=>d.funnels[f]);
+    const cc=funnels.reduce((n,f)=>n+Object.keys(d.funnels[f].campaigns).length,0);
+    const ac=funnels.reduce((n,f)=>n+Object.values(d.funnels[f].campaigns).reduce((m,c)=>m+(isND(c.adsets)?0:c.adsets.length),0),0);
+    const ctrlsHtml='<div class="ctrl-row"><label class="ctrl-lbl">Funnel</label><select id="ff-'+ch.id+'" class="ctrl-sel" onchange="ff(\''+ch.id+'\')"><option value="all">All Funnels</option><option value="awareness">Awareness</option><option value="consideration">Consideration</option><option value="conversion">Conversion</option></select><label class="ctrl-lbl">Product</label><select id="pf-'+ch.id+'" class="ctrl-sel" onchange="ff(\''+ch.id+'\')"><option value="all">All Products</option><option value="Formations">Formations</option><option value="Compliance">Compliance</option><option value="Consumer">Consumer</option></select><label class="ctrl-lbl">Targeting</label><select id="tf-'+ch.id+'" class="ctrl-sel" onchange="ff(\''+ ch.id +'\')"><option value="all">All Targeting</option><optgroup label="-- Prospecting --"><option value="BHT">Behavioral</option><option value="LAL">Lookalike</option><option value="INTR">Interest / Native</option><option value="CXT">Contextual</option><option value="SKT">Keyword</option><option value="CNT">Topic / Content</option><option value="AUT">Automated</option></optgroup><optgroup label="-- Retargeting --"><option value="CWT">1P Retargeting</option><option value="ERT">Engaged Audience</option></optgroup></select></div>';
+    let cards='';
+    funnels.forEach(fid=>{
+      const fu=d.funnels[fid];
+      cards+='<div class="fs" data-f="'+fid+'"><div class="fh"><span class="fb2 '+fid+'">'+esc(fu.label)+'</span><div class="fl"></div></div>';
+      fu._co.forEach(cn=>{cards+=buildCard(fu.campaigns[cn],ch.adterm);});
+      cards+='</div>';
+    });
+    return '<div class="ch-content" id="ch-'+ch.id+'"><div class="controls">'+ctrlsHtml+'</div><div class="stats"><div class="sp"><div class="sl">Campaigns</div><div class="sv">'+cc+'</div></div><div class="sp"><div class="sl">'+esc(ch.adterm)+'</div><div class="sv">'+ac+'</div></div></div><div class="cc" id="cc-'+ch.id+'">'+cards+'</div>'+(ch.src?'<div class="src">'+ch.src+'</div>':'')+'</div>';
+  }).join('');
+  document.getElementById('content-container').innerHTML=buildAllPlatforms()+contentHtml;
+}
+async function init(){
+  const url=localStorage.getItem('lz_csv_url');
+  if(url){
+    try{
+      const resp=await fetch(url);
+      if(!resp.ok)throw new Error('HTTP '+resp.status);
+      const text=await resp.text();
+      const rows=csvToRows(text);
+      if(!rows.length)throw new Error('Empty CSV');
+      _ds='live';_ft=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+      render(buildHierarchy(rows));
+    }catch(e){
+      console.warn('CSV fetch failed:',e.message);
+      _ds='error';render(buildHierarchy(DEFAULT_ROWS.map(rowToObj)));
+    }
+  }else{_ds='default';render(buildHierarchy(DEFAULT_ROWS.map(rowToObj)));}
+}
+function sw(ch,tab){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.ch-content').forEach(c=>c.classList.remove('active'));tab.classList.add('active');document.getElementById('ch-'+ch).classList.add('active');}
+function tc(id){document.getElementById(id).classList.toggle('open');}
+function ff(ch){
+  const funnel=(document.getElementById('ff-'+ch)||{}).value||'all';
+  const prod=(document.getElementById('pf-'+ch)||{}).value||'all';
+  const tgt=(document.getElementById('tf-'+ch)||{}).value||'all';
+  const grp=funnel==='all'?null:FUNNEL_GROUPS[funnel];
+  // 1. Show/hide funnel sections
+  document.getElementById('cc-'+ch).querySelectorAll('.fs').forEach(s=>{
+    s.style.display=(!grp||grp.includes(s.dataset.f))?'':'none';
+  });
+  // 2. Restore all ad groups, then show/hide campaigns by product
+  document.getElementById('cc-'+ch).querySelectorAll('.ac').forEach(ac=>{ac.style.display='';});
+  document.getElementById('cc-'+ch).querySelectorAll('.card').forEach(card=>{
+    const fsEl=card.closest('.fs');
+    if(fsEl&&fsEl.style.display==='none'){card.style.display='none';return;}
+    if(prod==='all'){card.style.display='';return;}
+    const prods=(card.dataset.products||'').split(',');
+    card.style.display=prods.includes(prod)?'':'none';
+  });
+  // 3. Show/hide individual ad groups by targeting type
+  if(tgt!=='all'){
+    document.getElementById('cc-'+ch).querySelectorAll('.ac').forEach(ac=>{
+      const cardEl=ac.closest('.card');
+      if(cardEl&&cardEl.style.display==='none'){ac.style.display='none';return;}
+      const _tgtMatch=tgt==='AUT'?(ac.dataset.targeting==='AUT'||ac.dataset.targeting==='MAX'):tgt==='CWT'?(ac.dataset.targeting==='CWT'||ac.dataset.targeting==='CLT'||ac.dataset.targeting==='WRT'):(ac.dataset.targeting===tgt);ac.style.display=_tgtMatch?'':'none';
+    });
+    // Hide campaigns where all ad groups are now filtered out
+    document.getElementById('cc-'+ch).querySelectorAll('.card').forEach(card=>{
+      if(card.style.display==='none')return;
+      const visAcs=[...card.querySelectorAll('.ac')].filter(a=>a.style.display!=='none');
+      card.style.display=visAcs.length?'':'none';
+    });
+  }
+  // 4. Always clean up: hide funnel sections where all cards are hidden
+  document.getElementById('cc-'+ch).querySelectorAll('.fs').forEach(s=>{
+    if(s.style.display==='none')return;
+    const vis=[...s.querySelectorAll('.card')].filter(c=>c.style.display!=='none');
+    s.style.display=vis.length?'':'none';
+  });
+}
+function hasPSEP(s){return/(^|[^A-Za-z])(PS|EP)([^A-Za-z]|$)/.test(s||'');}
+function getProductLabels(campName,adsets){
+  const n=campName||'';
+  if(n.includes('NTTF'))return['Compliance'];
+  if(hasPSEP(n))return['Consumer'];
+  if(adsets.some(a=>hasPSEP(a.techname||'')||hasPSEP(a.label||'')))return['Formations','Consumer'];
+  return['Formations'];
+}
+function getAgProductLabel(techname,label){
+  const t=techname||'',l=label||'';
+  if(t.includes('NTTF')||l.includes('NTTF'))return'Compliance';
+  if(hasPSEP(t)||hasPSEP(l))return'Consumer';
+  return'Formations';
+}
+function ta(ch){const cards=document.getElementById('cc-'+ch).querySelectorAll('.card');const btn=document.getElementById('ch-'+ch).querySelector('.ea');const any=[...cards].some(c=>c.classList.contains('open'));cards.forEach(c=>c.classList[any?'remove':'add']('open'));btn.textContent=any?'Expand All':'Collapse All';}
+function openCfg(){const ex=localStorage.getItem('lz_csv_url')||'';const d=document.getElementById('current-url-display');if(ex){d.style.display='block';d.innerHTML='<strong style="color:#166534">Connected:</strong> '+esc(ex);}else{d.style.display='none';}document.getElementById('cfg-url').value=ex;document.getElementById('cfg-modal').style.display='flex';}
+function closeCfg(){document.getElementById('cfg-modal').style.display='none';}
+function saveCfg(){const url=document.getElementById('cfg-url').value.trim();if(!url){alert('Please enter a URL.');return;}localStorage.setItem('lz_csv_url',url);closeCfg();init();}
+function clearCfg(){if(!confirm('Remove the connected Google Sheet URL? The dashboard will use default data.'))return;localStorage.removeItem('lz_csv_url');closeCfg();_ds='default';render(buildHierarchy(DEFAULT_ROWS.map(rowToObj)));}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body></html>
